@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | Irrigation Hub Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+        }
+
+        .auth-hero {
+            background: var(--bg-secondary);
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid var(--card-border);
+        }
+
+        .auth-form-side {
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .huge-auth-title {
+            font-size: 5rem;
+            line-height: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .auth-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .auth-input-group label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
+        .auth-input-group input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 1rem 0;
+            font-size: 1.2rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .auth-input-group input:focus {
+            border-color: var(--text-main);
+        }
+
+        @media (max-width: 900px) {
+            .auth-layout { grid-template-columns: 1fr; }
+            .auth-hero { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-layout">
+        <section class="auth-hero" style="position: relative; padding: 0; overflow: hidden;">
+            <img src="auth_studio_visual_1777121531505.png" alt="Studio Crop" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.4; filter: grayscale(100%);">
+            <div style="position: relative; z-index: 10; padding: var(--spacing-lg);">
+                <div class="serif" style="font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 2rem; color: var(--text-main);">ACCESS / 01</div>
+                <h1 class="huge-auth-title" style="color: var(--text-main);">Return <br> to the <br> <span style="font-style: italic;">Studio</span>.</h1>
+                <p style="color: var(--text-main); max-width: 300px; font-size: 0.9rem; opacity: 0.8;">Sign in to continue your agricultural protocols and monitor live field vitals.</p>
+            </div>
+        </section>
+
+        <main class="auth-form-side">
+            <nav style="position: absolute; top: var(--spacing-md); right: var(--spacing-md); display: flex; gap: 2rem; align-items: center;">
+                <button id="theme-toggle" class="btn" style="border: none; font-size: 0.6rem; padding: 0;">Toggle Mood</button>
+                <a href="index.html" class="serif" style="text-decoration: none; color: var(--text-main); font-size: 1.2rem;">Irrigation Hub®</a>
+            </nav>
+            <script src="theme.js"></script>
+
+            <form id="login-form" class="auth-form">
+                <div class="auth-input-group">
+                    <label>Identity / Email</label>
+                    <input type="email" id="email" required placeholder="farmer@estate.com">
+                </div>
+                <div class="auth-input-group">
+                    <label>Protocol / Password</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.5rem;">Initialize Session</button>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-align: center; text-transform: uppercase; letter-spacing: 1px;">
+                        New to the studio? <a href="register.html" style="color: var(--text-main); text-decoration: none; font-weight: 800;">Register Identity</a>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="auth-ui.js"></script>
+</body>
+</html>

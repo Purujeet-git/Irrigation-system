@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Studio | Irrigation Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        .farmer-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        .side-nav {
+            border-right: 1px solid var(--card-border);
+            padding: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .main-dashboard {
+            padding: var(--spacing-md);
+            overflow-y: auto;
+        }
+
+        .nav-header {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .nav-list a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s;
+        }
+
+        .nav-list a.active, .nav-list a:hover {
+            color: var(--text-main);
+        }
+
+        /* Field Card - Editorial Style */
+        .field-card {
+            border-top: 1px solid var(--card-border);
+            padding: var(--spacing-md) 0;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .field-meta {
+            grid-column: span 3;
+        }
+
+        .field-meta h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .field-meta .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .field-stats {
+            grid-column: span 5;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .stat-box {
+            border-left: 1px solid var(--card-border);
+            padding-left: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-family: var(--font-serif);
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .field-graph {
+            grid-column: span 4;
+            height: 200px;
+        }
+
+        /* Notification Panel */
+        .notification-tray {
+            margin-top: auto;
+            border-top: 1px solid var(--card-border);
+            padding-top: var(--spacing-md);
+        }
+
+        .notif-item {
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 1200px) {
+            .field-meta, .field-stats, .field-graph { grid-column: span 12; }
+            .farmer-layout { grid-template-columns: 1fr; }
+            .side-nav { height: auto; position: static; border-right: none; border-bottom: 1px solid var(--card-border); }
+        }
+    </style>
+</head>
+<body>
+    <div class="farmer-layout">
+        <aside class="side-nav">
+            <div class="nav-header">
+                <div class="serif" style="font-size: 1.2rem; margin-bottom: 0.5rem;">Irrigation Hub®</div>
+                <div id="user-display" style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Farmer Profile</div>
+            </div>
+
+            <nav>
+                <ul class="nav-list">
+                    <li><a href="#" class="active">Overview</a></li>
+                    <li><a href="#" id="add-field-btn">Add Field +</a></li>
+                    <li><button id="theme-toggle" class="btn" style="border: none; font-size: 0.6rem; padding: 0.5rem 0; margin: 1rem 0; display: block;">Toggle Mood</button></li>
+                    <li><a href="index.html">Main Site</a></li>
+                    <li><a href="#" id="logout-btn" style="color: #ef4444;">Sign Out</a></li>
+                </ul>
+            </nav>
+            <script src="theme.js"></script>
+
+            <div class="notification-tray">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <span style="font-size: 0.7rem; font-weight: 800; letter-spacing: 1px;">ALERTS</span>
+                    <button id="clear-notifications" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.6rem;">CLEAR</button>
+                </div>
+                <div id="notification-list">
+                    <div class="notif-item">No active system alerts.</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-dashboard">
+            <header style="margin-bottom: var(--spacing-lg);">
+                <h1 style="font-size: 3rem;">Your <span style="font-style: italic;">Estates</span>.</h1>
+            </header>
+
+            <section id="fields-container">
+                <!-- Fields will be injected here via app.js -->
+                <p class="serif" style="font-size: 1.5rem; color: var(--text-muted);">Syncing with field data...</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Minimal Modal -->
+    <div id="field-modal" class="modal hidden">
+        <div class="modal-content glass-card" style="border: 1px solid var(--text-main);">
+            <span id="close-modal" class="close" style="font-size: 1.5rem;">&times;</span>
+            <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 2rem;">Register Field</h2>
+            <form id="add-field-form">
+                <div class="form-group">
+                    <label style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;">Identifier</label>
+                    <input type="text" id="field-name" required placeholder="North Estate" style="background: transparent; border: none; border-bottom: 1px solid var(--card-border); color: white; padding: 1rem 0; width: 100%; outline: none; font-size: 1.2rem;">
+                </div>
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;">Region</label>
+                    <input type="text" id="field-location" required placeholder="Sultanpur" style="background: transparent; border: none; border-bottom: 1px solid var(--card-border); color: white; padding: 1rem 0; width: 100%; outline: none; font-size: 1.2rem;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;">Area (m²)</label>
+                        <input type="number" id="field-area" required style="background: transparent; border: none; border-bottom: 1px solid var(--card-border); color: white; padding: 1rem 0; width: 100%; outline: none; font-size: 1.2rem;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;">Specie</label>
+                        <select id="field-crop" required style="background: transparent; border: none; border-bottom: 1px solid var(--card-border); color: white; padding: 1.1rem 0; width: 100%; outline: none; font-size: 1.1rem;">
+                            <option value="">Select Crop</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;">Planting Date</label>
+                    <input type="date" id="field-planting-date" required style="background: transparent; border: none; border-bottom: 1px solid var(--card-border); color: white; padding: 1rem 0; width: 100%; outline: none; font-size: 1.2rem;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 3rem; width: 100%;">Commit Record</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

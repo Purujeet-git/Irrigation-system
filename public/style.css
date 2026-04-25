@@ -1,0 +1,316 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;600;800&display=swap');
+
+:root {
+  /* Minimalist Design Tokens */
+  --bg-main: #0a0a0a;
+  --bg-secondary: #121212;
+  --text-main: #fcfcfc;
+  --text-muted: #808080;
+  --accent-primary: #10b981;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #10b981;
+  
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-sans: 'Inter', sans-serif;
+  
+  --spacing-xl: 6rem;
+  --spacing-lg: 3rem;
+  --spacing-md: 1.5rem;
+  --spacing-sm: 1rem;
+  --theme-invert: 0;
+}
+
+body.light-mode {
+  --bg-main: #fcfcfc;
+  --bg-secondary: #f5f5f5;
+  --text-main: #0a0a0a;
+  --text-muted: #666666;
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-bg: rgba(0, 0, 0, 0.02);
+  --theme-invert: 1;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+@keyframes pulse-eminent {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.btn-eminent {
+  background: var(--accent-primary) !important;
+  color: #fff !important;
+  border: none !important;
+  animation: pulse-eminent 2s infinite;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+h1, h2, h3, .serif {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+.container {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+/* Glassmorphism Redefined */
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(40px);
+  border-radius: 0;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Buttons */
+.btn {
+  padding: 0.8rem 1.8rem;
+  border-radius: 0;
+  border: 1px solid var(--text-main);
+  background: transparent;
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.65rem;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.btn:hover {
+  background: var(--text-main);
+  color: var(--bg-main);
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: var(--text-main);
+  color: var(--bg-main);
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(20px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  transition: opacity 0.4s;
+}
+
+.modal.hidden {
+  display: none !important;
+}
+
+.modal-content {
+  background: var(--bg-main);
+  padding: var(--spacing-lg);
+  max-width: 550px;
+  width: 90%;
+  border: 1px solid var(--card-border);
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  cursor: pointer;
+  font-size: 2rem;
+  color: var(--text-muted);
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 2rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 1rem 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-main);
+  font-size: 1.1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  border-color: var(--text-main);
+}
+
+/* Toggle Switch */
+.switch-container {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch-container input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--card-border);
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--text-main);
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--danger);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+  background-color: var(--bg-main);
+}
+
+/* Utility */
+.hidden { display: none !important; }
+
+/* Dashboard Typography */
+.label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--card-border);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Dashboard Components */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.analytic-card {
+  border-top: 1px solid var(--card-border);
+  padding-top: var(--spacing-sm);
+}
+
+.analytic-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.analytic-value {
+  font-size: 2.2rem;
+  font-family: var(--font-serif);
+}
+
+.data-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 1rem;
+}
+
+/* Editorial Grid System (Admin/Farmer) */
+.data-row {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--card-border);
+  transition: background 0.3s;
+}
+
+.data-row:hover {
+  background: rgba(255,255,255,0.01);
+}
+
+.data-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

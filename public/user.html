@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="styles/variables.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/dashboard.css">
+<link rel="stylesheet" href="auth.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="dark-mode">
+  <nav class="navbar">
+    <div class="logo">🌱 IRRIGATION HUB</div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Farmer Dashboard</a>
+      <a href="admin.html" class="nav-link">Admin Dashboard</a>
+      <a href="user.html" class="nav-link active">User Dashboard</a>
+    </div>
+    <div class="nav-controls">
+      <button id="theme-toggle" class="btn btn-secondary">☀️ Light Mode</button>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="dashboard-header">
+      <div>
+        <h1>Community User Dashboard</h1>
+        <p>A read-only overview of our agricultural water usage and environmental impact.</p>
+      </div>
+    </header>
+
+
+
+    <!-- Analytics Overview -->
+    <section class="glass-card" style="margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="margin: 0;">📊 Ecosystem Health</h2>
+        <div id="insight-badge" style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600;">--</div>
+      </div>
+      
+      <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+        <div class="stat-box">
+          <div style="font-size: 0.9rem; color: var(--text-muted)">Total Water Conserved (Estimated)</div>
+          <div id="stat-total-water" class="stat-value text-accent">--</div>
+        </div>
+        <div class="stat-box">
+          <div style="font-size: 0.9rem; color: var(--text-muted)">Community Efficiency Score</div>
+          <div id="stat-system-efficiency" class="stat-value">--</div>
+        </div>
+      </div>
+      
+      <!-- Charts -->
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-top: 2rem;">
+        <div class="chart-container" style="height: 250px;">
+          <h3 style="text-align: center; font-size: 0.9rem; margin-bottom: 0.5rem;">Water Usage by Crop</h3>
+          <canvas id="userSystemChart"></canvas>
+        </div>
+        <div class="chart-container" style="height: 250px;">
+          <h3 style="text-align: center; font-size: 0.9rem; margin-bottom: 0.5rem;">Community Usage Trend (Liters)</h3>
+          <canvas id="userHistoryChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Field Status Board -->
+    <section class="glass-card">
+      <h2 style="margin-bottom: 1rem;">🌾 Public Field Status</h2>
+      <div id="fields-container" class="grid-layout">
+        <!-- Read-only fields injected here -->
+        <p>Loading fields...</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="user.js"></script>
+</body>
+</html>

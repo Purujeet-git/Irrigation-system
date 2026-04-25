@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Studio | Irrigation Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        .side-nav {
+            padding: var(--spacing-md);
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .main-content {
+            padding: var(--spacing-md);
+        }
+
+        @keyframes pulse-eminent {
+          0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+          70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .btn-eminent {
+          background: var(--accent-primary) !important;
+          color: #fff !important;
+          border: none !important;
+          animation: pulse-eminent 2s infinite;
+          font-weight: 800;
+          letter-spacing: 1px;
+        }
+
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: var(--spacing-lg);
+        }
+
+        .nav-list a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s;
+        }
+
+        .nav-list a.active, .nav-list a:hover {
+            color: var(--text-main);
+        }
+
+        /* Analytics Bento Grid */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1px;
+            background: var(--card-border);
+            border: 1px solid var(--card-border);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .analytic-card {
+            background: var(--bg-main);
+            padding: var(--spacing-md);
+            grid-column: span 3;
+        }
+
+        .analytic-value {
+            font-size: 3rem;
+            font-family: var(--font-serif);
+            margin-bottom: 0.5rem;
+        }
+
+        .analytic-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        /* Activity Table Style */
+        .data-section {
+            margin-top: var(--spacing-lg);
+            border-top: 1px solid var(--card-border);
+            padding-top: var(--spacing-md);
+        }
+
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .data-row {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--card-border);
+            transition: background 0.3s;
+        }
+
+        .data-row:hover {
+            background: var(--bg-secondary);
+        }
+
+        .data-cell {
+            grid-column: span 3;
+        }
+
+        @media (max-width: 1100px) {
+            .analytic-card { grid-column: span 6; }
+            .admin-layout { grid-template-columns: 1fr; }
+            .side-nav { height: auto; position: static; border-right: none; border-bottom: 1px solid var(--card-border); }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="side-nav">
+            <div class="serif" style="font-size: 1.5rem; letter-spacing: -1px;">Studio Admin®</div>
+            
+            <nav>
+                <ul class="nav-list">
+                    <li><a href="#farmers" class="sidebar-link">Directory</a></li>
+                    <li><a href="#crops" class="sidebar-link">Cultivars</a></li>
+                    <li><a href="#atmosphere" class="sidebar-link">Atmosphere</a></li>
+                    <li><a href="farmer.html" class="sidebar-link">Farmer View</a></li>
+                    <li><a href="#" id="logout-btn" style="color: #ef4444; margin-top: 2rem; display: block;">Log Out</a></li>
+                    <li><button id="theme-toggle" class="btn" style="margin-top: 2rem; border: none; font-size: 0.6rem; padding: 0;">Toggle Mood</button></li>
+                </ul>
+            </nav>
+
+            <div class="command-center" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--card-border);">
+                <div class="serif" style="font-size: 0.8rem; margin-bottom: 1rem; letter-spacing: 1px;">Command Center</div>
+                <input type="text" id="broadcast-input" placeholder="Broadcast Protocol..." style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); color: var(--text-main); font-size: 0.65rem; width: 100%; outline: none; padding: 0.8rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                <button id="send-broadcast-btn" class="btn btn-eminent" style="width: 100%; padding: 0.8rem; font-size: 0.6rem;">EMIT PROTOCOL</button>
+            </div>
+
+            <div id="user-display" style="margin-top: auto; font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
+                Administrator / Root
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <section id="analytics" class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--spacing-lg);">
+                    <h1 style="font-size: 3.5rem; line-height: 1;">System <span style="font-style: italic;">Vitality</span>.</h1>
+                </div>
+                
+                <div id="status-message" style="margin-bottom: 2rem; font-size: 0.65rem; color: var(--accent-primary); letter-spacing: 1px; text-transform: uppercase; font-weight: 800;"></div>
+                
+                <div class="analytics-grid">
+                    <div class="analytic-card">
+                        <div class="analytic-label">System Efficiency</div>
+                        <div id="stat-system-efficiency" class="analytic-value">0%</div>
+                    </div>
+                    <div class="analytic-card">
+                        <div class="analytic-label">Active Estates</div>
+                        <div id="stat-total-fields" class="analytic-value">0</div>
+                    </div>
+                    <div class="analytic-card">
+                        <div class="analytic-label">Total Hydration</div>
+                        <div id="stat-total-water" class="analytic-value">0</div>
+                    </div>
+                    <div class="analytic-card" id="weather-widget" style="background: rgba(59, 130, 246, 0.05);">
+                        <div class="analytic-label">Local Atmosphere</div>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem;">
+                            <div id="weather-temp" class="analytic-value" style="font-size: 2rem;">--°</div>
+                            <div style="flex: 1;">
+                                <div id="weather-desc" style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main);">Detecting...</div>
+                                <div id="weather-city" style="font-size: 0.6rem; color: var(--text-muted);">Syncing Station</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="analytic-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div class="analytic-label">System Override</div>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
+                            <span style="font-size: 0.7rem; color: var(--danger); font-weight: 800;">HALT ALL</span>
+                            <label class="switch-container">
+                                <input type="checkbox" id="halt-irrigation-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-container" style="display: flex; gap: 2rem; margin-bottom: var(--spacing-lg); align-items: flex-start;">
+                    <div style="flex: 1; position: relative; height: 300px; border-right: 1px solid var(--card-border); padding-right: 2rem;">
+                        <span class="label">Usage by Cultivar</span>
+                        <div style="height: 250px;">
+                            <canvas id="systemChart"></canvas>
+                        </div>
+                    </div>
+                    <div style="flex: 2; position: relative; height: 300px;">
+                        <span class="label">Hydration History</span>
+                        <div style="height: 250px;">
+                            <canvas id="historyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="alerts-panel" style="margin-bottom: var(--spacing-lg);">
+                    <!-- Critical alerts injected here -->
+                </div>
+            </section>
+
+            <section id="farmers" class="dashboard-section" style="margin-top: var(--spacing-xl);">
+                <div class="data-header">
+                    <h2 class="serif" style="font-size: 3rem;">Registry.</h2>
+                    <span class="analytic-label">Farmer Directory</span>
+                </div>
+                <div id="farmers-container">
+                    <!-- Rows injected via admin.js -->
+                </div>
+            </section>
+
+            <section id="crops" class="dashboard-section" style="margin-top: var(--spacing-xl);">
+                <div class="data-header">
+                    <h2 class="serif" style="font-size: 3rem;">Cultivars.</h2>
+                    <button id="add-crop-btn" class="btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.6rem;">Register New Species +</button>
+                </div>
+                <div id="crops-container">
+                    <!-- Rows injected via admin.js -->
+                </div>
+            </section>
+
+            <section id="atmosphere" class="data-section dashboard-section" style="margin-top: var(--spacing-xl);">
+                <div class="data-header">
+                    <h2 class="serif" style="font-size: 3rem;">Atmosphere.</h2>
+                    <div id="activity-summary" style="display: flex; gap: 1rem; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;"></div>
+                </div>
+                <div id="activity-container">
+                    <!-- Rows injected via admin.js -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals (Minimalist) -->
+    <div id="farmer-modal" class="modal hidden">
+        <div class="modal-content glass-card" style="border: 1px solid var(--text-main);">
+            <span id="close-farmer-modal" class="close">&times;</span>
+            <h2 id="farmer-modal-title" class="serif" style="font-size: 2.5rem;">Estate Drilldown</h2>
+            <div id="farmer-fields-container" style="margin-top: 2rem;"></div>
+        </div>
+    </div>
+
+    <!-- Crop Management Modal -->
+    <div id="crop-modal" class="modal hidden">
+        <div class="modal-content glass-card" style="border: 1px solid var(--text-main);">
+            <span id="close-crop-modal" class="close">&times;</span>
+            <h2 id="crop-modal-title" class="serif" style="font-size: 2.5rem; margin-bottom: 2rem;">Cultivar Protocol</h2>
+            <form id="edit-crop-form">
+                <input type="hidden" id="edit-crop-id">
+                <div class="form-group">
+                    <label>Species Name</label>
+                    <input type="text" id="edit-crop-name" required placeholder="Wheat">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Min Moisture (%)</label>
+                        <input type="number" id="edit-crop-minM" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Moisture (%)</label>
+                        <input type="number" id="edit-crop-maxM" required>
+                    </div>
+                </div>
+                <h4 class="serif" style="margin: 1rem 0;">Growth Stages (Days / Liters per m²)</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem;">
+                    <input type="number" id="crop-init-days" placeholder="Init Days">
+                    <input type="number" id="crop-init-water" placeholder="Init Water">
+                    <input type="number" id="crop-growth-days" placeholder="Growth Days">
+                    <input type="number" id="crop-growth-water" placeholder="Growth Water">
+                    <input type="number" id="crop-mid-days" placeholder="Mid Days">
+                    <input type="number" id="crop-mid-water" placeholder="Mid Water">
+                    <input type="number" id="crop-late-days" placeholder="Late Days">
+                    <input type="number" id="crop-late-water" placeholder="Late Water">
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 2rem; width: 100%;">Apply Protocol</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="theme.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
