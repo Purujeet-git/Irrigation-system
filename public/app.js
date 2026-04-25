@@ -383,22 +383,12 @@ async function loadFields() {
             const stageInfo = getLifeCycleStage(field.plantingDate, crop.stages);
             const suggestedWater = (stageInfo.water * field.area).toFixed(1);
 
-            const cropIcons = {
-                'Wheat': 'crop_wheat_icon_1777121572174.png',
-                'Corn': 'crop_corn_icon_1777121589486.png',
-                'Rice': 'crop_wheat_icon_1777121572174.png' // Fallback
-            };
-            const iconUrl = cropIcons[crop.name] || 'crop_wheat_icon_1777121572174.png';
-
             const card = document.createElement('div');
             card.className = 'glass-card field-card';
             card.className = 'field-card fade-in';
             card.innerHTML = `
                 <div class="field-meta">
-                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                        <img src="${iconUrl}" style="width: 30px; height: 30px; opacity: 0.8; filter: invert(var(--theme-invert));">
-                        <span class="label" style="margin-bottom: 0;">${crop.name}</span>
-                    </div>
+                    <span class="label">${crop.name}</span>
                     <h3>${field.name}</h3>
                     <p style="font-size: 0.8rem; color: var(--text-muted);">${field.location} — ${field.area}m²</p>
                     <div style="margin-top: 2rem; display: flex; gap: 0.5rem;">
@@ -555,6 +545,9 @@ setInterval(pollSystemSettings, 5000);
 async function init() {
     renderNotifications();
     await registerServiceWorker();
+    await loadCrops();
+    await loadFields();
+    pollSystemSettings();
 }
 
 init();
