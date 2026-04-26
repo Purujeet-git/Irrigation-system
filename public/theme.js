@@ -23,6 +23,11 @@
                 const isLight = document.body.classList.contains('light-mode');
                 localStorage.setItem('site-theme', isLight ? 'light' : 'dark');
                 updateToggleText(isLight);
+                
+                // Dispatch event for other components (like charts) to react
+                document.dispatchEvent(new CustomEvent('themeChanged', { 
+                    detail: { theme: isLight ? 'light' : 'dark' } 
+                }));
             });
         });
     });

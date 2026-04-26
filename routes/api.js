@@ -201,6 +201,57 @@ router.get("/weather/forecast", async (req, res) => {
   }
 });
 
+// GET /api/weather - Dynamic weather detection for Admin Dashboard
+router.get("/weather", async (req, res) => {
+  try {
+    let { lat, lon, location } = req.query;
+    let locationName = location || "Detected Station";
+
+    // If no coordinates provided, try to fallback to primary field or London
+    if (!lat || !lon) {
+      const field = await Field.findOne();
+      if (field && field.latitude && field.longitude) {
+        lat = field.latitude;
+        lon = field.longitude;
+        locationName = field.location;
+      } else {
+        const coords = await getCoordinates("London");
+        if (coords) {
+          lat = coords.lat;
+          lon = coords.lon;
+          locationName = "London";
+        }
+      }
+    }
+
+    if (!lat || !lon) return res.status(404).json({ error: "Could not determine location" });
+
+    const weather = await getCurrentWeather(lat, lon);
+    if (!weather) return res.status(500).json({ error: "Failed to fetch weather from provider" });
+
+    const forecast = await getTomorrowForecast(lat, lon);
+
+    // Condition Mapping Logic
+    let condition = "Stable Atmosphere";
+    if (weather.humidity > 80) condition = "High Humidity";
+    else if (weather.humidity > 60) condition = "Cloudy Skies";
+    else if (weather.temperature > 30) condition = "Arid & Hot";
+    else if (weather.temperature < 15) condition = "Cool Breezes";
+
+    res.json({
+      current: {
+        temp: weather.temperature,
+        humidity: weather.humidity,
+        condition: condition
+      },
+      forecast: forecast || { maxTemp: "--", isRainExpected: false },
+      location: locationName
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Delete field
 router.delete("/fields/:id", async (req, res) => {
   try {

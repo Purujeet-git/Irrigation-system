@@ -212,24 +212,67 @@ function renderHistoryChart(labels, actual, optimal) {
     canvas.style.width = '100%';
     canvas.style.height = '100%';
 
+    const isLight = document.body.classList.contains('light-mode');
+    const textColor = isLight ? '#0a0a0a' : '#fcfcfc';
+    const gridColor = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.03)';
+    const actualBorder = isLight ? '#0a0a0a' : '#fcfcfc';
+    const actualBg = isLight ? 'rgba(0, 0, 0, 0.05)' : 'rgba(252, 252, 252, 0.05)';
+    const targetBorder = isLight ? '#666666' : '#808080';
+
     historyChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
         labels: labels,
         datasets: [
-          { label: 'Actual Hydration', data: actual, borderColor: '#fcfcfc', backgroundColor: 'rgba(252, 252, 252, 0.05)', fill: true, tension: 0.2, borderWidth: 1.5, pointRadius: 0 },
-          { label: 'Target', data: optimal, borderColor: '#808080', backgroundColor: 'transparent', fill: false, tension: 0.2, borderDash: [4, 4], borderWidth: 1, pointRadius: 0 }
+          { 
+            label: 'Actual Hydration', 
+            data: actual, 
+            borderColor: actualBorder, 
+            backgroundColor: actualBg, 
+            fill: true, 
+            tension: 0.2, 
+            borderWidth: 1.5, 
+            pointRadius: 0 
+          },
+          { 
+            label: 'Target', 
+            data: optimal, 
+            borderColor: targetBorder, 
+            backgroundColor: 'transparent', 
+            fill: false, 
+            tension: 0.2, 
+            borderDash: [4, 4], 
+            borderWidth: 1, 
+            pointRadius: 0 
+          }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          y: { beginAtZero: true, border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'var(--text-muted)', font: { size: 9 } } },
-          x: { border: { display: false }, grid: { display: false }, ticks: { color: 'var(--text-muted)', font: { size: 9 } } }
+          y: { 
+            beginAtZero: true, 
+            border: { display: false }, 
+            grid: { color: gridColor }, 
+            ticks: { color: textColor, font: { size: 9 } } 
+          },
+          x: { 
+            border: { display: false }, 
+            grid: { display: false }, 
+            ticks: { color: textColor, font: { size: 9 } } 
+          }
         },
         plugins: { 
-          legend: { position: 'top', align: 'end', labels: { color: 'var(--text-muted)', boxWidth: 10, font: { size: 10, family: 'Inter' } } }
+          legend: { 
+            position: 'top', 
+            align: 'end', 
+            labels: { 
+              color: textColor, 
+              boxWidth: 10, 
+              font: { size: 10, family: 'Inter' } 
+            } 
+          }
         }
       }
     });
@@ -247,13 +290,17 @@ function renderSystemChart(labels, data) {
     canvas.style.width = '100%';
     canvas.style.height = '100%';
 
+    const isLight = document.body.classList.contains('light-mode');
+    const lightPalette = ['#10b981', '#111111', '#444444', '#777777', '#aaaaaa'];
+    const darkPalette = ['#fcfcfc', '#808080', '#404040', '#202020', '#111111'];
+
     systemChartInstance = new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels: labels.length ? labels : ['No Data'],
         datasets: [{
           data: data.length ? data : [1],
-          backgroundColor: ['#fcfcfc', '#808080', '#404040', '#202020', '#111111'],
+          backgroundColor: isLight ? lightPalette : darkPalette,
           borderWidth: 0,
           hoverOffset: 4
         }]
@@ -687,17 +734,56 @@ async function init() {
 }
 
 async function loadAdminWeather() {
-  try {
-    const res = await fetch(`${API_URL}/weather?location=London`); // Default or dynamic
-    const data = await res.json();
-    if (data.current) {
-      document.getElementById('weather-temp').textContent = `${Math.round(data.current.temp)}°`;
-      document.getElementById('weather-desc').textContent = data.current.condition;
-      document.getElementById('weather-city').textContent = 'Global Station Alpha';
+  const weatherTemp = document.getElementById('weather-temp');
+  const weatherDesc = document.getElementById('weather-desc');
+  const weatherCity = document.getElementById('weather-city');
+  const weatherHum = document.getElementById('weather-humidity');
+  const weatherFore = document.getElementById('weather-forecast');
+  const weatherForeDesc = document.getElementById('weather-forecast-desc');
+
+  const fetchWeather = async (lat = null, lon = null) => {
+    try {
+      let url = `${API_URL}/weather`;
+      if (lat && lon) url += `?lat=${lat}&lon=${lon}`;
+      
+      const res = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      
+      if (data.current) {
+        if (weatherTemp) weatherTemp.textContent = `${Math.round(data.current.temp)}°`;
+        if (weatherDesc) weatherDesc.textContent = data.current.condition;
+        if (weatherCity) weatherCity.textContent = data.location || 'Global Station Alpha';
+        if (weatherHum) weatherHum.textContent = `${Math.round(data.current.humidity)}%`;
+      }
+
+      if (data.forecast) {
+        if (weatherFore) weatherFore.textContent = `${Math.round(data.forecast.maxTemp)}°`;
+        if (weatherForeDesc) {
+            weatherForeDesc.textContent = data.forecast.isRainExpected 
+                ? `🚨 Rain Detected (${data.forecast.rainAmount}mm)` 
+                : "✅ No Rain Protocol";
+        }
+      }
+    } catch (err) {
+      console.error('Weather load failed', err);
     }
-  } catch (err) {
-    console.error('Weather load failed', err);
+  };
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+      () => fetchWeather() // Fallback if user denies
+    );
+  } else {
+    fetchWeather(); // Fallback if browser doesn't support geolocation
   }
 }
+
+// Listen for theme changes to refresh charts
+document.addEventListener('themeChanged', () => {
+  loadAnalytics();
+});
 
 init();

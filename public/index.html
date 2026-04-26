@@ -4,43 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Irrigation Hub | Smarter Agriculture</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
+    
     <style>
+        /* Base Variables - Ensures the design works flawlessly */
+        :root {
+            --bg-main: #0a0a0a;
+            --bg-secondary: #121212;
+            --text-main: #fcfcfc;
+            --text-muted: #808080;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-primary: #10b981;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+            --spacing-xl: 8rem;
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        /* Light Mode Support */
+        body.light-mode {
+            --bg-main: #fcfcfc;
+            --bg-secondary: #f5f5f5;
+            --text-main: #0a0a0a;
+            --text-muted: #666666;
+            --card-border: rgba(0, 0, 0, 0.08);
+        }
+
+        /* Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .serif { font-family: var(--font-serif); }
+
+        /* Navigation */
         .editorial-nav {
-            padding: var(--spacing-md);
+            padding: 1.5rem var(--spacing-md);
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            background: var(--bg-main);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 100;
+            border-bottom: 1px solid var(--card-border);
+            transition: background 0.3s ease;
         }
 
+        body.light-mode .editorial-nav {
+            background: rgba(252, 252, 252, 0.85);
+        }
+
+        .nav-links {
+            display: flex; 
+            gap: 2.5rem; 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            transition: opacity 0.2s ease;
+        }
+
+        .nav-links a:hover { opacity: 0.6; }
+
+        /* Buttons */
+        .btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--text-main);
+            color: var(--bg-main);
+            text-decoration: none;
+            padding: 1.2rem 3rem;
+            border-radius: 50px; /* Modern pill shape */
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid var(--text-main);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            background: transparent;
+            color: var(--text-main);
+        }
+
+        /* Hero Section */
         .hero-section {
-            padding: var(--spacing-xl) var(--spacing-md);
+            padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
             border-bottom: 1px solid var(--card-border);
+            animation: fadeUp 1s ease-out;
         }
 
         .huge-title {
-            font-size: clamp(2.5rem, 8vw, 6rem);
-            line-height: 0.9;
+            font-size: clamp(3rem, 10vw, 7.5rem);
+            line-height: 0.95;
             margin-bottom: var(--spacing-lg);
             max-width: 1400px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
         }
 
+        .image-wrapper {
+            width: 100%; 
+            height: 75vh; 
+            overflow: hidden; 
+            margin-bottom: var(--spacing-xl); 
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .image-wrapper img {
+            max-width: 45%; 
+            height: auto;
+            max-height: 100%; 
+            object-fit: contain; 
+            transition: transform 1.2s ease;
+        }
+
+        .image-wrapper:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Editorial Layout */
         .editorial-row {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
             gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg);
         }
 
         .meta-label {
             grid-column: span 3;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            font-weight: 600;
             color: var(--text-muted);
             border-top: 1px solid var(--card-border);
             padding-top: 1rem;
@@ -48,24 +188,30 @@
 
         .content-main {
             grid-column: 5 / span 8;
-            font-size: 1.5rem;
-            line-height: 1.4;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            line-height: 1.5;
             font-family: var(--font-serif);
+            color: var(--text-main);
         }
 
+        /* Bento Grid */
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
             gap: 1px;
             background: var(--card-border);
             border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         .bento-item {
             background: var(--bg-main);
             padding: var(--spacing-lg) var(--spacing-md);
             grid-column: span 4;
-            transition: background 0.3s;
+            transition: background 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         .bento-item:hover {
@@ -73,18 +219,65 @@
         }
 
         .bento-item h3 {
-            font-size: 2rem;
+            font-size: 1.5rem;
             margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
         }
 
         .bento-item p {
             color: var(--text-muted);
-            font-size: 0.9rem;
-            max-width: 300px;
+            font-size: 1rem;
+            line-height: 1.6;
         }
 
+        /* CTA & Footer */
+        .cta-section {
+            padding: var(--spacing-xl) var(--spacing-md);
+            text-align: center;
+            background: var(--bg-secondary);
+        }
+
+        .cta-section h2 {
+            font-family: var(--font-serif);
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            margin-bottom: var(--spacing-md);
+        }
+
+        footer {
+            padding: var(--spacing-md); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        footer span {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        footer span:hover {
+            color: var(--text-main);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Breakpoints */
         @media (max-width: 900px) {
-            .meta-label, .content-main, .bento-item { grid-column: span 12; }
+            .meta-label { grid-column: span 12; border-top: none; padding-top: 0; margin-bottom: 0.5rem; }
+            .content-main { grid-column: span 12; margin-bottom: 2rem; }
+            .bento-item { grid-column: span 12; }
+            .image-wrapper { height: 50vh; }
+            footer { flex-direction: column; gap: 1.5rem; text-align: center; }
         }
     </style>
 </head>
@@ -99,21 +292,23 @@
     </script>
 
     <script src="theme.js"></script>
+
     <nav class="editorial-nav">
-        <div class="serif" style="font-size: 1.5rem; letter-spacing: -1px;">Irrigation Hub®</div>
-        <div style="display: flex; gap: 2rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; align-items: center;">
-            <button id="theme-toggle" class="btn" style="border: none; font-size: 0.6rem; padding: 0;">Toggle Mood</button>
-            <a href="login.html" style="text-decoration: none; color: var(--text-main);">Login</a>
-            <a href="register.html" style="text-decoration: none; color: var(--text-main); font-weight: 800;">Join</a>
+        <div class="serif" style="font-size: 1.75rem; letter-spacing: -1px; font-weight: 600;">Irrigation Hub<span style="font-size: 1rem; vertical-align: super;">®</span></div>
+        <div class="nav-links">
+            <button id="theme-toggle" class="btn">Toggle Mood</button>
+            <a href="login.html">Login</a>
+            <a href="register.html" style="color: #10b981;">Join</a>
         </div>
     </nav>
 
     <main>
         <section class="hero-section">
-            <h1 class="huge-title">Accelerating <br> <span style="font-style: italic;">Smarter</span> <br> Agriculture.</h1>
+            <h1 class="huge-title">Accelerating <br> <span class="serif" style="font-style: italic; font-weight: 400;">Smarter</span> <br> Agriculture.</h1>
             
-            <div style="width: 100%; height: 90vh; overflow: hidden; margin-bottom: var(--spacing-lg); border: 1px solid var(--card-border);">
-                <img src="1.webp" alt="Futuristic Agriculture" style="width: 100%; height: 100%; object-fit: cover; transition: filter 0.8s ease;">
+            <div class="image-wrapper">
+                <img src="1.webp" alt="Futuristic Agriculture">
+                <img src="1.webp" alt="Futuristic Agriculture">
             </div>
             
             <div class="editorial-row">
@@ -123,7 +318,7 @@
                 </div>
             </div>
 
-            <div class="editorial-row" style="margin-top: 10rem;">
+            <div class="editorial-row" style="margin-top: var(--spacing-xl);">
                 <div class="meta-label">Utility / 02</div>
                 <div class="content-main">
                     <div class="bento-grid">
@@ -144,13 +339,13 @@
             </div>
         </section>
 
-        <section style="padding: var(--spacing-xl) var(--spacing-md); text-align: center;">
-            <h2 style="font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 2rem;">Ready to <span style="font-style: italic;">cultivate</span>?</h2>
-            <a href="register.html" class="btn btn-primary" style="padding: 2rem 4rem;">Get Started</a>
+        <section class="cta-section">
+            <h2>Ready to <span style="font-style: italic;">cultivate</span>?</h2>
+            <a href="register.html" class="btn-primary">Get Started</a>
         </section>
     </main>
 
-    <footer style="padding: var(--spacing-lg) var(--spacing-md); border-top: 1px solid var(--card-border); display: flex; justify-content: space-between; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted);">
+    <footer>
         <div>© 2026 Irrigation Hub Studio</div>
         <div style="display: flex; gap: 2rem;">
             <span>Terms</span>
