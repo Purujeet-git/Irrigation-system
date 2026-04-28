@@ -124,6 +124,67 @@
             color: var(--text-muted);
         }
 
+        /* Form Styling */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .form-group label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
+        .form-group input,
+        .form-group select {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 1rem 0;
+            font-size: 1.2rem;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-family: var(--font-sans);
+            width: 100%;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--text-main);
+            box-shadow: 0 1px 0 var(--text-main);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .form-group input:hover:not(:focus),
+        .form-group select:hover:not(:focus) {
+            border-bottom-color: var(--text-muted);
+        }
+
+        .form-group select option {
+            background: #ffffff;
+            color: #000000;
+            padding: 0.8rem;
+        }
+
+        #field-crop option {
+            background: #ffffff;
+            color: #000000;
+        }
+
+        #add-field-form {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
         @media (max-width: 1200px) {
             .field-meta, .field-stats, .field-graph { grid-column: span 12; }
             .farmer-layout { grid-template-columns: 1fr; }
@@ -177,33 +238,33 @@
     <div id="field-modal" class="modal hidden">
         <div class="modal-content glass-card" style="border: 1px solid var(--text-main);">
             <span id="close-modal" class="close" style="font-size: 1.5rem;">&times;</span>
-            <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 2rem;">Register Field</h2>
+            <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 2.5rem;">Register Field</h2>
             <form id="add-field-form">
                 <div class="form-group">
-                    <label style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;">Identifier</label>
-                    <input type="text" id="field-name" required placeholder="North Estate" style="background: transparent; border: none; border-bottom: 1px solid var(--card-border); color: white; padding: 1rem 0; width: 100%; outline: none; font-size: 1.2rem;">
+                    <label>Identifier</label>
+                    <input type="text" id="field-name" required placeholder="North Estate">
                 </div>
-                <div class="form-group" style="margin-top: 1.5rem;">
-                    <label style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;">Region</label>
-                    <input type="text" id="field-location" required placeholder="Sultanpur" style="background: transparent; border: none; border-bottom: 1px solid var(--card-border); color: white; padding: 1rem 0; width: 100%; outline: none; font-size: 1.2rem;">
+                <div class="form-group">
+                    <label>Region</label>
+                    <input type="text" id="field-location" required placeholder="Sultanpur">
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem;">
                     <div class="form-group">
-                        <label style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;">Area (m²)</label>
-                        <input type="number" id="field-area" required style="background: transparent; border: none; border-bottom: 1px solid var(--card-border); color: white; padding: 1rem 0; width: 100%; outline: none; font-size: 1.2rem;">
+                        <label>Area (m²)</label>
+                        <input type="number" id="field-area" required placeholder="5000">
                     </div>
                     <div class="form-group">
-                        <label style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;">Specie</label>
-                        <select id="field-crop" required style="background: transparent; border: none; border-bottom: 1px solid var(--card-border); color: white; padding: 1.1rem 0; width: 100%; outline: none; font-size: 1.1rem;">
+                        <label>Specie</label>
+                        <select id="field-crop" required>
                             <option value="">Select Crop</option>
                         </select>
                     </div>
                 </div>
-                <div class="form-group" style="margin-top: 1.5rem;">
-                    <label style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;">Planting Date</label>
-                    <input type="date" id="field-planting-date" required style="background: transparent; border: none; border-bottom: 1px solid var(--card-border); color: white; padding: 1rem 0; width: 100%; outline: none; font-size: 1.2rem;">
+                <div class="form-group">
+                    <label>Planting Date</label>
+                    <input type="date" id="field-planting-date" required>
                 </div>
-                <button type="submit" class="btn btn-primary" style="margin-top: 3rem; width: 100%;">Commit Record</button>
+                <button type="submit" class="btn btn-primary" style="margin-top: 2.5rem; width: 100%; padding: 1.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Commit Record</button>
             </form>
         </div>
     </div>

@@ -52,10 +52,24 @@ if (registerForm) {
   registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     localStorage.clear(); // Clear any old sessions
+    
+    const submitBtn = registerForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating Identity...';
+    
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const role = document.getElementById('role').value;
+
+    // Validate role selection
+    if (!role) {
+      showToast('Please select a role to continue', true);
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      return;
+    }
 
     try {
       const res = await fetch(`${API_AUTH}/register`, {
@@ -68,15 +82,19 @@ if (registerForm) {
       if (res.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        showToast('Account created successfully!');
+        showToast('Identity established successfully!');
         setTimeout(() => {
-          window.location.href = data.user.role === 'Admin' ? 'admin.html' : 'index.html';
+          window.location.href = data.user.role === 'Admin' ? 'admin.html' : 'farmer.html';
         }, 1500);
       } else {
         showToast(data.error || 'Registration failed', true);
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
       }
     } catch (err) {
       showToast('Network error, please try again', true);
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
     }
   });
 }

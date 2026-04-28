@@ -345,7 +345,7 @@ async function loadCrops() {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const crops = await res.json();
-        select.innerHTML = '<option value="">Select a crop</option>';
+        select.innerHTML = '<option value="" style=color:black;>Select a crop</option>';
         crops.forEach(c => {
             const opt = document.createElement('option');
             opt.value = c._id;

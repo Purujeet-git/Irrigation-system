@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Irrigation Hub | Smarter Agriculture</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
-    
+
     <style>
         /* Base Variables - Ensures the design works flawlessly */
         :root {
@@ -53,7 +56,9 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .serif { font-family: var(--font-serif); }
+        .serif {
+            font-family: var(--font-serif);
+        }
 
         /* Navigation */
         .editorial-nav {
@@ -76,11 +81,11 @@
         }
 
         .nav-links {
-            display: flex; 
-            gap: 2.5rem; 
-            font-size: 0.75rem; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
+            display: flex;
+            gap: 2.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             align-items: center;
             font-weight: 600;
         }
@@ -91,7 +96,9 @@
             transition: opacity 0.2s ease;
         }
 
-        .nav-links a:hover { opacity: 0.6; }
+        .nav-links a:hover {
+            opacity: 0.6;
+        }
 
         /* Buttons */
         .btn {
@@ -112,7 +119,8 @@
             color: var(--bg-main);
             text-decoration: none;
             padding: 1.2rem 3rem;
-            border-radius: 50px; /* Modern pill shape */
+            border-radius: 50px;
+            /* Modern pill shape */
             font-weight: 600;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             border: 1px solid var(--text-main);
@@ -120,7 +128,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             background: transparent;
             color: var(--text-main);
         }
@@ -142,10 +150,10 @@
         }
 
         .image-wrapper {
-            width: 100%; 
-            height: 75vh; 
-            overflow: hidden; 
-            margin-bottom: var(--spacing-xl); 
+            width: 100%;
+            height: 75vh;
+            overflow: hidden;
+            margin-bottom: var(--spacing-xl);
             border-radius: 12px;
             border: 1px solid var(--card-border);
             display: flex;
@@ -156,10 +164,10 @@
         }
 
         .image-wrapper img {
-            max-width: 45%; 
+            max-width: 45%;
             height: auto;
-            max-height: 100%; 
-            object-fit: contain; 
+            max-height: 100%;
+            object-fit: contain;
             transition: transform 1.2s ease;
         }
 
@@ -245,13 +253,13 @@
         }
 
         footer {
-            padding: var(--spacing-md); 
-            display: flex; 
-            justify-content: space-between; 
+            padding: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            font-size: 0.75rem; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             color: var(--text-muted);
             font-weight: 600;
         }
@@ -267,20 +275,48 @@
 
         /* Animations */
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Responsive Breakpoints */
         @media (max-width: 900px) {
-            .meta-label { grid-column: span 12; border-top: none; padding-top: 0; margin-bottom: 0.5rem; }
-            .content-main { grid-column: span 12; margin-bottom: 2rem; }
-            .bento-item { grid-column: span 12; }
-            .image-wrapper { height: 50vh; }
-            footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+            .meta-label {
+                grid-column: span 12;
+                border-top: none;
+                padding-top: 0;
+                margin-bottom: 0.5rem;
+            }
+
+            .content-main {
+                grid-column: span 12;
+                margin-bottom: 2rem;
+            }
+
+            .bento-item {
+                grid-column: span 12;
+            }
+
+            .image-wrapper {
+                height: 50vh;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
         }
     </style>
 </head>
+
 <body>
     <script>
         const user = JSON.parse(localStorage.getItem('user'));
@@ -294,7 +330,8 @@
     <script src="theme.js"></script>
 
     <nav class="editorial-nav">
-        <div class="serif" style="font-size: 1.75rem; letter-spacing: -1px; font-weight: 600;">Irrigation Hub<span style="font-size: 1rem; vertical-align: super;">®</span></div>
+        <div class="serif" style="font-size: 1.75rem; letter-spacing: -1px; font-weight: 600;">Irrigation Hub<span
+                style="font-size: 1rem; vertical-align: super;">®</span></div>
         <div class="nav-links">
             <button id="theme-toggle" class="btn">Toggle Mood</button>
             <a href="login.html">Login</a>
@@ -304,39 +341,51 @@
 
     <main>
         <section class="hero-section">
-            <h1 class="huge-title">Accelerating <br> <span class="serif" style="font-style: italic; font-weight: 400;">Smarter</span> <br> Agriculture.</h1>
-            
-            <div class="image-wrapper">
-                <img src="1.webp" alt="Futuristic Agriculture">
-                <img src="1.webp" alt="Futuristic Agriculture">
-            </div>
-            
-            <div class="editorial-row">
-                <div class="meta-label">Philosophy / 01</div>
-                <div class="content-main">
-                    We believe in a future where data and nature coexist in perfect harmony. Our platform bridges the gap between complex agricultural utility and refined digital design, creating brand systems for the world's most disruptive farmers.
-                </div>
-            </div>
+            <h1 class="huge-title">Accelerating <br> <span class="serif"
+                    style="font-style: italic; font-weight: 400;">Smarter</span> <br> Agriculture.</h1>
 
-            <div class="editorial-row" style="margin-top: var(--spacing-xl);">
-                <div class="meta-label">Utility / 02</div>
-                <div class="content-main">
-                    <div class="bento-grid">
-                        <div class="bento-item">
-                            <h3>Real-time</h3>
-                            <p>Global monitoring of soil health and moisture levels via orbital weather integration.</p>
-                        </div>
-                        <div class="bento-item">
-                            <h3>Lifecycle</h3>
-                            <p>Dynamic irrigation protocols tailored to the biological stage of each unique crop.</p>
-                        </div>
-                        <div class="bento-item">
-                            <h3>Hardware</h3>
-                            <p>Seamless ESP integration for automated physical response to digital triggers.</p>
+            <<<<<<< HEAD <div
+                style="width: 100%; height: 90vh; overflow: hidden; margin-bottom: var(--spacing-lg); border: 1px solid var(--card-border);">
+                <img src="1.webp" alt="Futuristic Agriculture"
+                    style="width: 100%; height: 100%; object-fit: cover; transition: filter 0.8s ease;">
+                =======
+                <div class="image-wrapper">
+                    <img src="1.webp" alt="Futuristic Agriculture">
+                    <img src="2.jpg" alt="Futuristic Agriculture">
+                    >>>>>>> 7a8c8c9 (Enhance admin dashboard with weather/humidity widgets, theme-aware charts, and hero
+                    section polish)
+                </div>
+
+                <div class="editorial-row">
+                    <div class="meta-label">Philosophy / 01</div>
+                    <div class="content-main">
+                        We believe in a future where data and nature coexist in perfect harmony. Our platform bridges
+                        the gap between complex agricultural utility and refined digital design, creating brand systems
+                        for the world's most disruptive farmers.
+                    </div>
+                </div>
+
+                <div class="editorial-row" style="margin-top: var(--spacing-xl);">
+                    <div class="meta-label">Utility / 02</div>
+                    <div class="content-main">
+                        <div class="bento-grid">
+                            <div class="bento-item">
+                                <h3>Real-time</h3>
+                                <p>Global monitoring of soil health and moisture levels via orbital weather integration.
+                                </p>
+                            </div>
+                            <div class="bento-item">
+                                <h3>Lifecycle</h3>
+                                <p>Dynamic irrigation protocols tailored to the biological stage of each unique crop.
+                                </p>
+                            </div>
+                            <div class="bento-item">
+                                <h3>Hardware</h3>
+                                <p>Seamless ESP integration for automated physical response to digital triggers.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
         </section>
 
         <section class="cta-section">
@@ -354,4 +403,5 @@
         </div>
     </footer>
 </body>
+
 </html>
