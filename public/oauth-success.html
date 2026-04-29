@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Authenticating...</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="status"></div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        const user = params.get('user');
+
+        if (token && user) {
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', user);
+            const userData = JSON.parse(user);
+            window.location.href = userData.role === 'Admin' ? 'admin.html' : 'farmer.html';
+        } else {
+            document.getElementById('status').textContent = 'Authentication failed. Returning to login...';
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

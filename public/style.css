@@ -151,6 +151,8 @@ h1, h2, h3, .serif {
   width: 90%;
   border: 1px solid var(--card-border);
   position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .close {

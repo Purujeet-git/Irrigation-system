@@ -33,10 +33,7 @@ if (loginForm) {
       if (res.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        showToast('Login successful! Redirecting...');
-        setTimeout(() => {
-          window.location.href = data.user.role === 'Admin' ? 'admin.html' : 'farmer.html';
-        }, 1500);
+        window.location.href = data.user.role === 'Admin' ? 'admin.html' : 'farmer.html';
       } else {
         showToast(data.error || 'Login failed', true);
       }
@@ -61,15 +58,7 @@ if (registerForm) {
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const role = document.getElementById('role').value;
-
-    // Validate role selection
-    if (!role) {
-      showToast('Please select a role to continue', true);
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-      return;
-    }
+    const role = 'Farmer'; // Default all new users to Farmer
 
     try {
       const res = await fetch(`${API_AUTH}/register`, {
@@ -82,10 +71,7 @@ if (registerForm) {
       if (res.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        showToast('Identity established successfully!');
-        setTimeout(() => {
-          window.location.href = data.user.role === 'Admin' ? 'admin.html' : 'farmer.html';
-        }, 1500);
+        window.location.href = data.user.role === 'Admin' ? 'admin.html' : 'farmer.html';
       } else {
         showToast(data.error || 'Registration failed', true);
         submitBtn.disabled = false;

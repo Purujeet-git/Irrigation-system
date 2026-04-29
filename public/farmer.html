@@ -116,6 +116,21 @@
             margin-top: auto;
             border-top: 1px solid var(--card-border);
             padding-top: var(--spacing-md);
+            overflow: hidden; /* Prevent tray from expanding sidebar */
+        }
+
+        #notification-list {
+            max-height: 35vh;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Custom scrollbar for notifications */
+        #notification-list::-webkit-scrollbar {
+            width: 3px;
+        }
+        #notification-list::-webkit-scrollbar-thumb {
+            background: var(--card-border);
         }
 
         .notif-item {
@@ -205,7 +220,7 @@
                     <li><a href="#" class="active">Overview</a></li>
                     <li><a href="#" id="add-field-btn">Add Field +</a></li>
                     <li><button id="theme-toggle" class="btn" style="border: none; font-size: 0.6rem; padding: 0.5rem 0; margin: 1rem 0; display: block;">Toggle Mood</button></li>
-                    <li><a href="index.html">Main Site</a></li>
+                    <li><a href="/index.html">Main Site</a></li>
                     <li><a href="#" id="logout-btn" style="color: #ef4444;">Sign Out</a></li>
                 </ul>
             </nav>

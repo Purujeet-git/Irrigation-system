@@ -111,69 +111,148 @@ function startTimer(fieldId, lastUpdated) {
 
 async function renderFieldChart(fieldId) {
     try {
-        const res = await fetch(`${API_URL}/fields/${fieldId}/stats`, {
+        const chartLabels = [];
+        const actualData = [];
+        const optimalData = [];
+        
+        // Cache-busting: Add timestamp to prevent stale data
+        const res = await fetch(`${API_URL}/fields/${fieldId}/stats?t=${Date.now()}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
         const logs = data.logs || [];
 
-        const ctx = document.getElementById(`chart-${fieldId}`).getContext('2d');
+        // Fetch field details for depletion calculation (crop and temp)
+        const fieldRes = await fetch(`${API_URL}/fields`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const fields = await fieldRes.json();
+        const field = fields.find(f => f._id === fieldId);
         
+        if (!field) return;
+
+        const crop = field.cropId || { stages: null };
+        const stageInfo = getLifeCycleStage(field.plantingDate, crop.stages);
+        const dailyRequirement = stageInfo.water * field.area; // Total liters per day
+        const hourlyDepletion = dailyRequirement / 24;
+        
+        // Temperature Multiplier: 1.0 at 25°C, increases by 10% for every 5°C above
+        const tempMultiplier = 1 + (Math.max(0, field.temperature - 25) * 0.02);
+
+        logs.forEach((log, index) => {
+            const date = new Date(log.date);
+            const label = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Normalized Percentage Calculation
+            const hydrationPeak = (log.actual / log.optimal) * 100;
+            
+            // 1. Add the point where irrigation happened (peak)
+            chartLabels.push(label);
+            actualData.push(Math.round(hydrationPeak));
+            optimalData.push(100); // Target is always 100% of optimal
+
+            // 2. Add a depletion point just before the next log (or "Now")
+            const nextDate = logs[index + 1] ? new Date(logs[index + 1].date) : new Date();
+            const hoursPassed = (nextDate - date) / (1000 * 60 * 60);
+            
+            // Visual Boost: Make depletion more visible by increasing sensitivity if it's too subtle
+            const totalDepletion = (hourlyDepletion * hoursPassed * tempMultiplier);
+            const levelBeforeNext = Math.max(0, log.actual - totalDepletion);
+            const hydrationBeforeNext = (levelBeforeNext / log.optimal) * 100;
+            
+            const nextLabel = logs[index + 1] 
+                ? new Date(nextDate.getTime() - 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+                : 'Now';
+            
+            chartLabels.push(nextLabel);
+            actualData.push(Math.round(hydrationBeforeNext));
+            optimalData.push(100);
+        });
+
+        const ctx = document.getElementById(`chart-${fieldId}`).getContext('2d');
         if (chartInstances[fieldId]) chartInstances[fieldId].destroy();
 
-        const chartLabels = logs.slice(-10).map(l => new Date(l.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-        const chartData = logs.slice(-10).map(l => l.actual);
+        // Theme-aware colors
+        const isLight = document.body.classList.contains('light-mode');
+        const textColor = isLight ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)';
+        const gridColor = isLight ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)';
+        const mutedTextColor = isLight ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.3)';
 
-        // Simulation: If we have at least one irrigation, add a "Projected Now" point
-        // This creates the "depleting" line effect by calculating moisture loss over time
-        if (logs.length > 0) {
-            const lastLog = logs[logs.length - 1];
-            const now = new Date();
-            const hoursPassed = (now - new Date(lastLog.date)) / (1000 * 60 * 60);
-            
-            // We simulate a 4% drop per hour (approx 100% to 0% in 24h)
-            const depletionFactor = Math.max(0.1, 1 - (hoursPassed * 0.04));
-            const currentSimulatedLevel = lastLog.actual * depletionFactor;
+        // Check if user wants "Protocol Only" (Optimal) view
+        const isProtocolView = document.getElementById(`toggle-${fieldId}`)?.getAttribute('data-view') === 'optimal';
 
-            chartLabels.push('Now');
-            chartData.push(Math.round(currentSimulatedLevel));
-        }
+        const actualDataset = {
+            label: 'Hydration Level (%)',
+            data: actualData,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: (ctx) => ctx.dataIndex % 2 === 0 ? 3 : 0, 
+            hidden: isProtocolView
+        };
+
+        const optimalDataset = {
+            label: 'Target Protocol (100%)',
+            data: optimalData,
+            borderColor: '#10b981',
+            borderDash: [5, 5],
+            backgroundColor: 'transparent',
+            fill: false,
+            tension: 0,
+            pointRadius: 0,
+            hidden: !isProtocolView && logs.length > 0 
+        };
 
         chartInstances[fieldId] = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: chartLabels,
-                datasets: [{
-                    label: 'Moisture Level (L/m²)',
-                    data: chartData,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: (ctx) => ctx.dataIndex === chartData.length - 1 ? 4 : 2,
-                    pointBackgroundColor: (ctx) => ctx.dataIndex === chartData.length - 1 ? '#ef4444' : '#3b82f6'
-                }]
+                datasets: isProtocolView ? [optimalDataset] : [actualDataset, optimalDataset]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: { duration: 800, easing: 'easeOutQuart' },
                 plugins: { 
-                    legend: { display: false },
+                    legend: { 
+                        display: true,
+                        labels: { color: textColor, font: { size: 10, family: 'Inter' }, boxWidth: 12 }
+                    },
                     tooltip: {
                         callbacks: {
-                            label: (context) => `Level: ${context.raw} L`
+                            label: (context) => {
+                                const logIndex = Math.floor(context.dataIndex / 2);
+                                const isPeak = context.dataIndex % 2 === 0;
+                                const log = logs[logIndex];
+                                if (!log) return `${context.dataset.label}: ${context.raw}%`;
+                                
+                                // Show % and the underlying Liter value for clarity
+                                if (context.datasetIndex === 0) { // Actual
+                                    const liters = isPeak ? log.actual : Math.round((context.raw / 100) * log.optimal);
+                                    return `Hydration: ${context.raw}% (${liters} Liters)`;
+                                } else { // Optimal
+                                    return `Target: 100% (${log.optimal} Liters)`;
+                                }
+                            }
                         }
                     }
                 },
                 scales: {
                     y: { 
                         beginAtZero: true, 
-                        grid: { color: 'rgba(255,255,255,0.05)' },
-                        ticks: { color: 'rgba(255,255,255,0.5)' }
+                        max: 120, // Give some headroom above 100%
+                        grid: { color: gridColor },
+                        ticks: { 
+                            color: textColor, 
+                            font: { size: 9 },
+                            callback: (value) => `${value}%`
+                        },
+                        title: { display: true, text: 'Hydration Level', color: mutedTextColor, font: { size: 10 } }
                     },
                     x: { 
                         grid: { display: false },
-                        ticks: { color: 'rgba(255,255,255,0.5)' }
+                        ticks: { color: textColor, font: { size: 9 } }
                     }
                 }
             }
@@ -388,11 +467,18 @@ async function loadFields() {
             card.className = 'field-card fade-in';
             card.innerHTML = `
                 <div class="field-meta">
-                    <span class="label">${crop.name}</span>
-                    <h3>${field.name}</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">${field.location} — ${field.area}m²</p>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <span class="label">${crop.name}</span>
+                            <h3>${field.name}</h3>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">${field.location} — ${field.area}m²</p>
+                        </div>
+                        <button id="toggle-${field._id}" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.55rem; border-color: rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 1px;" data-view="actual">
+                            Protocol View
+                        </button>
+                    </div>
                     <div style="margin-top: 2rem; display: flex; gap: 0.5rem;">
-                        <button class="btn btn-primary irrigate-btn" style="padding: 0.6rem 1rem; font-size: 0.6rem;">Irrigated Now</button>
+                        <button class="btn btn-primary irrigate-btn" style="padding: 0.6rem 1rem; font-size: 0.6rem;">Irrigate Now</button>
                         <button class="btn delete-btn" style="padding: 0.6rem; font-size: 0.6rem; border-color: rgba(239,68,68,0.2); color: #ef4444;">Remove</button>
                     </div>
                 </div>
@@ -426,6 +512,15 @@ async function loadFields() {
             // Initialize Timer & Chart
             startTimer(field._id, field.lastUpdated);
             renderFieldChart(field._id);
+
+            // Toggle logic
+            card.querySelector(`#toggle-${field._id}`).addEventListener('click', (e) => {
+                const btn = e.target;
+                const isActual = btn.getAttribute('data-view') === 'actual';
+                btn.setAttribute('data-view', isActual ? 'optimal' : 'actual');
+                btn.textContent = isActual ? 'Show Actual' : 'Protocol View';
+                renderFieldChart(field._id);
+            });
 
             // Irrigation logic
             card.querySelector('.irrigate-btn').addEventListener('click', async (e) => {
@@ -540,6 +635,15 @@ async function pollSystemSettings() {
 
 // Start polling every 5 seconds
 setInterval(pollSystemSettings, 5000);
+
+// Listen for theme changes to refresh charts
+document.addEventListener('themeChanged', () => {
+    const charts = document.querySelectorAll('canvas[id^="chart-"]');
+    charts.forEach(canvas => {
+        const fieldId = canvas.id.replace('chart-', '');
+        renderFieldChart(fieldId);
+    });
+});
 
 // Init
 async function init() {

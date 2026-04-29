@@ -135,44 +135,60 @@
 
         /* Hero Section */
         .hero-section {
-            padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
+            padding: var(--spacing-xl) var(--spacing-md);
             border-bottom: 1px solid var(--card-border);
             animation: fadeUp 1s ease-out;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: var(--spacing-lg);
+            min-height: 90vh;
         }
 
         .huge-title {
-            font-size: clamp(3rem, 10vw, 7.5rem);
-            line-height: 0.95;
-            margin-bottom: var(--spacing-lg);
-            max-width: 1400px;
+            font-size: clamp(3rem, 7vw, 6.5rem);
+            line-height: 0.9;
+            margin-bottom: 0;
             font-weight: 800;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.04em;
+        }
+
+        @media (max-width: 1000px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+                padding-top: var(--spacing-lg);
+                gap: var(--spacing-md);
+            }
+            .huge-title {
+                font-size: 4rem;
+                margin-bottom: var(--spacing-md);
+            }
+            .image-wrapper {
+                height: 50vh !important;
+            }
         }
 
         .image-wrapper {
             width: 100%;
-            height: 75vh;
+            height: 80vh;
             overflow: hidden;
-            margin-bottom: var(--spacing-xl);
-            border-radius: 12px;
+            border-radius: 24px;
             border: 1px solid var(--card-border);
             display: flex;
-            gap: 2rem;
             justify-content: center;
             align-items: center;
-            padding: 2rem;
+            position: relative;
         }
 
         .image-wrapper img {
-            max-width: 45%;
-            height: auto;
-            max-height: 100%;
-            object-fit: contain;
-            transition: transform 1.2s ease;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .image-wrapper:hover img {
-            transform: scale(1.03);
+            transform: scale(1.05);
         }
 
         /* Editorial Layout */
@@ -318,14 +334,6 @@
 </head>
 
 <body>
-    <script>
-        const user = JSON.parse(localStorage.getItem('user'));
-        const token = localStorage.getItem('token');
-        if (user && token) {
-            if (user.role === 'Admin') window.location.href = 'admin.html';
-            else window.location.href = 'farmer.html';
-        }
-    </script>
 
     <script src="theme.js"></script>
 
@@ -344,17 +352,9 @@
             <h1 class="huge-title">Accelerating <br> <span class="serif"
                     style="font-style: italic; font-weight: 400;">Smarter</span> <br> Agriculture.</h1>
 
-            <<<<<<< HEAD <div
-                style="width: 100%; height: 90vh; overflow: hidden; margin-bottom: var(--spacing-lg); border: 1px solid var(--card-border);">
-                <img src="1.webp" alt="Futuristic Agriculture"
-                    style="width: 100%; height: 100%; object-fit: cover; transition: filter 0.8s ease;">
-                =======
-                <div class="image-wrapper">
-                    <img src="1.webp" alt="Futuristic Agriculture">
-                    <img src="2.jpg" alt="Futuristic Agriculture">
-                    >>>>>>> 7a8c8c9 (Enhance admin dashboard with weather/humidity widgets, theme-aware charts, and hero
-                    section polish)
-                </div>
+            <div class="image-wrapper" style="border: 1px solid var(--text-main);">
+                <img src="1.webp" alt="Futuristic Agriculture">
+            </div>
 
                 <div class="editorial-row">
                     <div class="meta-label">Philosophy / 01</div>
